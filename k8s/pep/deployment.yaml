@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pep
+  namespace: zerotrust
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pep
+  template:
+    metadata:
+      labels:
+        app: pep
+    spec:
+      containers:
+        - name: pep
+          image: pep:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PDP_URL
+              value: "http://pdp:8001"
+            - name: PIP_URL
+              value: "http://pip:8002"
+            - name: UPSTREAM_URL
+              value: "http://upstream:8080"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: zerotrust-secrets
+                  key: jwt-secret
+            - name: REDIS_URL
+              value: "redis://redis:6379"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pep
+  namespace: zerotrust
+spec:
+  selector:
+    app: pep
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: NodePort

@@ -1,0 +1,26 @@
+policies:
+  - name: "admin-only-delete"
+    subject: "role:admin"
+    resource: "/api/users"
+    action: "DELETE"
+    effect: ALLOW
+    priority: 1
+
+  - name: "block-high-risk"
+    subject: "role:user"
+    resource: "/api/transfer"
+    action: "POST"
+    condition: "riskScore < 70"
+    effect: ALLOW
+    priority: 2
+
+  - name: "user-read-allowed"
+    subject: "role:user"
+    resource: "/api/users"
+    action: "GET"
+    effect: ALLOW
+    priority: 3
+
+  - name: "default-deny"
+    effect: DENY
+    priority: 999

@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: upstream-allow-pep-only
+  namespace: zerotrust
+spec:
+  podSelector:
+    matchLabels:
+      app: upstream
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: pep
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pdp-allow-pep-only
+  namespace: zerotrust
+spec:
+  podSelector:
+    matchLabels:
+      app: pdp
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: pep
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pip-allow-pep-only
+  namespace: zerotrust
+spec:
+  podSelector:
+    matchLabels:
+      app: pip
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: pep
